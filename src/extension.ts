@@ -141,6 +141,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 
 		const selection = editor.document.getText(editor.selection);
+		vscode.window.showInformationMessage("¡¡¡Generando codigo!!!.");
 		if (selection) {
 			provider?.sendApiRequest(selection, { command: "generateCode", language: editor.document.languageId });
 		}

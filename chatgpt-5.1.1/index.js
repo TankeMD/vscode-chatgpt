@@ -213,6 +213,7 @@ Current date: ${currentDate}`;
       abortController = new AbortController();
       abortSignal = abortController.signal;
     }
+    //text = text.replace("docpath", "acme").replace("qdf", "acmedf").replace("qfs", "acmefs");
     const message = {
       role: "user",
       id: messageId,
@@ -266,8 +267,7 @@ Current date: ${currentDate}`;
                   if ((_a2 = response == null ? void 0 : response.choices) == null ? void 0 : _a2.length) {
                     const delta = response.choices[0].delta;
                     result.delta = delta.content;
-                    if (delta == null ? void 0 : delta.content)
-                      result.text += delta.content;
+                    if (delta == null ? void 0 : delta.content) { result.text += delta.content; }
                     result.detail = response;
                     if (delta.role) {
                       result.role = delta.role;

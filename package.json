@@ -1,13 +1,13 @@
 {
-  "name": "vscode-chatgpt",
-  "publisher": "YOUR_PUBLISHER_NAME",
-  "displayName": "vscode-chatgpt",
+  "name": "dp-vscode-chatgpt",
+  "publisher": "DocPath",
+  "displayName": "dp-vscode-chatgpt",
   "icon": "images/ai-logo.jpg",
-  "description": "vscode-chatgpt",
-  "version": "3.9.7-0",
+  "description": "dp-vscode-chatgpt",
+  "version": "3.9.7-13",
   "aiKey": "",
   "repository": {
-    "url": "https://github.com/YOUR_PUBLISHER_NAME/vscode-chatgpt"
+    "url": "https://github.com/docpath/vscode-chatgpt"
   },
   "engines": {
     "vscode": "^1.73.0"
