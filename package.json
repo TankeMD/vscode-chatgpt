@@ -1,10 +1,10 @@
 {
   "name": "dp-vscode-chatgpt",
   "publisher": "DocPath",
-  "displayName": "dp-vscode-chatgpt",
-  "icon": "images/ai-logo.jpg",
-  "description": "dp-vscode-chatgpt",
-  "version": "3.9.7-13",
+  "displayName": "DocPath ChatGPT for VSCode",
+  "icon": "images/dp-ai-logo.jpg",
+  "description": "Plugin para uso seguro de ChatGPT desde VSCode.",
+  "version": "4.0.0-0",
   "aiKey": "",
   "repository": {
     "url": "https://github.com/docpath/vscode-chatgpt"
@@ -242,7 +242,7 @@
       ]
     },
     "configuration": {
-      "title": "ChatGPT",
+      "title": "DocPath ChatGPT",
       "properties": {
         "chatgpt.method": {
           "type": "string",

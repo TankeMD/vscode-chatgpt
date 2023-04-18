@@ -32,7 +32,7 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 	private currentMessageId: string = "";
 	private response: string = "";
 
-	private nonAllowedWords = ['docpath', 'qfs', 'qdf'];
+	private nonAllowedWords = ['docpath', 'qfs', 'qdf', 'xxtea', 'icbuilder', 'dpencrypt', 'dpdecrypt'];
 
 	/**
 	 * Message to be rendered lazily if they haven't been rendered
@@ -71,87 +71,87 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.onDidReceiveMessage(async data => {
 
-			if (data !== undefined && data.value !== undefined) {
-				let nonAllowedWordFound: boolean = false;
-				for (const palabra of this.nonAllowedWords) {
-					if (data.value.toLocaleLowerCase().includes(palabra.toLocaleLowerCase())) {
-						nonAllowedWordFound = true;
-						vscode.window.showInformationMessage("La palabra " + palabra + " no puede ser incluida en la consulta.");
-						break;
-					}
+			//if (data !== undefined && data.value !== undefined) {
+			/*let nonAllowedWordFound: boolean = false;
+			for (const palabra of this.nonAllowedWords) {
+				if (data.value.toLocaleLowerCase().includes(palabra.toLocaleLowerCase())) {
+					nonAllowedWordFound = true;
+					vscode.window.showInformationMessage("La palabra " + palabra + " no puede ser incluida en la consulta.");
+					break;
 				}
-				if (nonAllowedWordFound === false) {
-					switch (data.type) {
-						case 'addFreeTextQuestion':
-							//Este codigo es el que envia la pregunta a ChatGPT
-							this.sendApiRequest(data.value, { command: "freeText" });
-							break;
-						case 'editCode':
-							const escapedString = (data.value as string).replace(/\$/g, '\\$');;
-							vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(escapedString));
+			}
+			if (nonAllowedWordFound === false) {*/
+			switch (data.type) {
+				case 'addFreeTextQuestion':
+					//Este codigo es el que envia la pregunta a ChatGPT
+					this.sendApiRequest(data.value, { command: "freeText" });
+					break;
+				case 'editCode':
+					const escapedString = (data.value as string).replace(/\$/g, '\\$');;
+					vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(escapedString));
 
-							this.logEvent("code-inserted");
-							break;
-						case 'openNew':
-							const document = await vscode.workspace.openTextDocument({
-								content: data.value,
-								language: data.language
-							});
-							vscode.window.showTextDocument(document);
+					this.logEvent("code-inserted");
+					break;
+				case 'openNew':
+					const document = await vscode.workspace.openTextDocument({
+						content: data.value,
+						language: data.language
+					});
+					vscode.window.showTextDocument(document);
 
-							this.logEvent(data.language === "markdown" ? "code-exported" : "code-opened");
-							break;
-						case 'clearConversation':
-							this.messageId = undefined;
-							this.conversationId = undefined;
+					this.logEvent(data.language === "markdown" ? "code-exported" : "code-opened");
+					break;
+				case 'clearConversation':
+					this.messageId = undefined;
+					this.conversationId = undefined;
 
-							this.logEvent("conversation-cleared");
-							break;
-						case 'clearBrowser':
-							this.logEvent("browser-cleared");
-							break;
-						case 'cleargpt3':
-							this.apiGpt3 = undefined;
+					this.logEvent("conversation-cleared");
+					break;
+				case 'clearBrowser':
+					this.logEvent("browser-cleared");
+					break;
+				case 'cleargpt3':
+					this.apiGpt3 = undefined;
 
-							this.logEvent("gpt3-cleared");
-							break;
-						case 'login':
-							this.prepareConversation().then(success => {
-								if (success) {
-									this.sendMessage({ type: 'loginSuccessful', showConversations: this.useAutoLogin }, true);
+					this.logEvent("gpt3-cleared");
+					break;
+				case 'login':
+					this.prepareConversation().then(success => {
+						if (success) {
+							this.sendMessage({ type: 'loginSuccessful', showConversations: this.useAutoLogin }, true);
 
-									this.logEvent("logged-in");
-								}
-							});
-							break;
-						case 'openSettings':
-							vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt chatgpt.");
+							this.logEvent("logged-in");
+						}
+					});
+					break;
+				case 'openSettings':
+					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt chatgpt.");
 
-							this.logEvent("settings-opened");
-							break;
-						case 'openSettingsPrompt':
-							vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt promptPrefix");
+					this.logEvent("settings-opened");
+					break;
+				case 'openSettingsPrompt':
+					vscode.commands.executeCommand('workbench.action.openSettings', "@ext:YOUR_PUBLISHER_NAME.vscode-chatgpt promptPrefix");
 
-							this.logEvent("settings-prompt-opened");
-							break;
-						case 'listConversations':
-							this.logEvent("conversations-list-attempted");
-							break;
-						case 'showConversation':
-							/// ...
-							break;
-						case "stopGenerating":
-							this.stopGenerating();
-							break;
-						default:
-							break;
-					}
-				}
-			} else {
+					this.logEvent("settings-prompt-opened");
+					break;
+				case 'listConversations':
+					this.logEvent("conversations-list-attempted");
+					break;
+				case 'showConversation':
+					/// ...
+					break;
+				case "stopGenerating":
+					this.stopGenerating();
+					break;
+				default:
+					break;
+			}
+			//}
+			/*} else {
 				const errorMsg = "Error: la variable 'data' no está definida o no tiene un valor.";
 				console.error(errorMsg);
 				vscode.window.showErrorMessage(errorMsg);
-			}
+			}*/
 		});
 
 		if (this.leftOverMessage != null) {
@@ -338,15 +338,26 @@ export default class ChatGptViewProvider implements vscode.WebviewViewProvider {
 		}
 
 		let nonAllowedWordFound: boolean = false;
-		if (options !== undefined && options.code !== undefined) {
-			for (const palabra of this.nonAllowedWords) {
-				if (options.code.toLocaleLowerCase().includes(palabra.toLocaleLowerCase())) {
-					nonAllowedWordFound = true;
-					await vscode.window.showInformationMessage("La palabra " + palabra + " no puede ser incluida en la consulta.");
-					break;
+		if (options !== undefined) {
+			if (options.code !== undefined) {
+				for (const palabra of this.nonAllowedWords) {
+					if (options.code.toLocaleLowerCase().includes(palabra.toLocaleLowerCase())) {
+						nonAllowedWordFound = true;
+						await vscode.window.showInformationMessage("La palabra " + palabra + " no puede ser incluida en la consulta.");
+						break;
+					}
+				}
+			} else if (options.command === 'freeText') {
+				for (const palabra of this.nonAllowedWords) {
+					if (prompt.toLocaleLowerCase().includes(palabra.toLocaleLowerCase())) {
+						nonAllowedWordFound = true;
+						await vscode.window.showInformationMessage("La palabra " + palabra + " no puede ser incluida en la consulta.");
+						break;
+					}
 				}
 			}
 		}
+
 
 		if (nonAllowedWordFound) {
 			return;
